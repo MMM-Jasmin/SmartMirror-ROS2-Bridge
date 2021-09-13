@@ -19,7 +19,8 @@ Module.register('SmartMirror-ROS2-Bridge', {
 	/**
 	*/
 	defaults: {
-		FromROS2Topics: []
+		FromROS2Topics: [],
+		ToROS2Topics:[],
 	},
 
 	/**
