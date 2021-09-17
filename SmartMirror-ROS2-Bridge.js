@@ -14,29 +14,25 @@ Module.register('SmartMirror-ROS2-Bridge', {
 
 	Debug_infos: {},
 
-
-	/** @member {boolean} pulsing - Flag to indicate listening state. */
-	/**
-	*/
 	defaults: {
 		FromROS2Topics: [],
 		ToROS2Topics:[],
+		initRosContext:false,
 	},
 
 	/**
 	* @function start
 	* @description Sets mode to initialising.
-	* @override
 	*/
 	start() {
 		var self = this;
 		this.sendSocketNotification('CONFIG', this.config);
 	},
 
-	//----------------------------------------------------------------------//
-	// CREATE DOM
-	// shows debug information in the this.Debug_infos[key] dictionary
-	//----------------------------------------------------------------------//
+	/**
+	 * CREATE DOM
+	 * shows debug information in the this.Debug_infos[key] dictionary
+	 */
 	getDom() {
 		var self = this;
 		self.data.header = 'ROS2 Debug Informations'
@@ -77,19 +73,25 @@ Module.register('SmartMirror-ROS2-Bridge', {
 
 
 	/**
-	* @function socketNotificationReceived
-	* @description Handles incoming messages from node_helper.
-	* @override
-  	   *
-	* @param {string} notification - Notification name
-	* @param {*} payload - Detailed payload of the notification.
-	*/
+	 * @function socketNotificationReceived
+	 * @description Handles incoming messages from node_helper.
+  	 *
+	 * @param {string} notification - Notification name
+	 * @param {*} payload - Detailed payload of the notification.
+	 */
 	socketNotificationReceived(notification, payload) {
 		const self = this;
 		self.Debug_infos[notification] = payload;
 		self.updateDom();
 	},
 
+	/**
+	 * @function notificationReceived
+	 * @description Handles incoming messages from other modules.
+	 *
+	 * @param {string} notification - Notification name
+	 * @param {*} payload - Detailed payload of the notification.
+	 */
 	notificationReceived: function(notification, payload, sender) {
 		const self = this;
 
