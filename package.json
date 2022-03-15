@@ -1,0 +1,13 @@
+{
+  "name": "SmartMirror-ROS2-Bridge",
+  "version": "0.0.1",
+  "description": "Brigde between the MM middleware and ROS2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MMM-Jasmin/SmartMirror-ROS2-Bridge.git"
+  },
+  "dependencies": {
+    "rclnodejs": "latest"
+  }
+}
+
