@@ -16,9 +16,9 @@ Module.register('SmartMirror-ROS2-Bridge', {
 
 	defaults: {
 		FromROS2Topics: [],
-		ToROS2Topics:[],
-		initRosContext:true,
-		DummyMessage:true,
+		ToROS2Topics: [],
+		initRosContext: true,
+		DummyMessage: true,
 	},
 
 	/**
@@ -40,34 +40,34 @@ Module.register('SmartMirror-ROS2-Bridge', {
 
 		var myTableDiv = document.createElement("DebugTable");
 		myTableDiv.className = "DebugTablexsmall";
-		
 
-  		var table = document.createElement('TABLE');
-  		//table.border = '1';
+
+		var table = document.createElement('TABLE');
+		//table.border = '1';
 		table.className = "DebugTablexsmall";
 
-  		var tableBody = document.createElement('TBODY');
-  		table.appendChild(tableBody);
-		
+		var tableBody = document.createElement('TBODY');
+		table.appendChild(tableBody);
+
 		for (var key in self.Debug_infos) {
 			var tr = document.createElement('TR');
 			tr.className = "DebugTablexsmall";
-			tableBody.appendChild(tr);		
+			tableBody.appendChild(tr);
 			var td = document.createElement('TD');
-      		td.appendChild(document.createTextNode(key));
+			td.appendChild(document.createTextNode(key));
 			td.className = "DebugTablexsmall";
 			//td.width = '70px';
-      		tr.appendChild(td);
+			tr.appendChild(td);
 			var td = document.createElement('TD');
-      		//td.width = '50';
-      		td.appendChild(document.createTextNode(self.Debug_infos[key]));
+			//td.width = '50';
+			td.appendChild(document.createTextNode(self.Debug_infos[key]));
 			td.width = '70px';
-      		tr.appendChild(td);   
-			
-			
-		} 
+			tr.appendChild(td);
 
-  		myTableDiv.appendChild(table);
+
+		}
+
+		myTableDiv.appendChild(table);
 
 		return myTableDiv;
 	},
@@ -76,7 +76,7 @@ Module.register('SmartMirror-ROS2-Bridge', {
 	/**
 	 * @function socketNotificationReceived
 	 * @description Handles incoming messages from node_helper.
-  	 *
+		 *
 	 * @param {string} notification - Notification name
 	 * @param {*} payload - Detailed payload of the notification.
 	 */
@@ -84,6 +84,7 @@ Module.register('SmartMirror-ROS2-Bridge', {
 		const self = this;
 		self.Debug_infos[notification] = payload;
 		self.updateDom();
+		this.sendNotification(notification, payload);
 	},
 
 	/**
@@ -93,7 +94,7 @@ Module.register('SmartMirror-ROS2-Bridge', {
 	 * @param {string} notification - Notification name
 	 * @param {*} payload - Detailed payload of the notification.
 	 */
-	notificationReceived: function(notification, payload, sender) {
+	notificationReceived: function (notification, payload, sender) {
 		const self = this;
 
 
