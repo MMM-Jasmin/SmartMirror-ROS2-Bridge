@@ -30,6 +30,11 @@ Module.register('SmartMirror-ROS2-Bridge', {
 		this.sendSocketNotification('CONFIG', this.config);
 	},
 
+	stop(){
+		this.sendSocketNotification('RESTART_COMING', "");
+		console.log("ROS2 bridge stopped!")
+	},
+
 	/**
 	 * CREATE DOM
 	 * shows debug information in the this.Debug_infos[key] dictionary
@@ -64,7 +69,6 @@ Module.register('SmartMirror-ROS2-Bridge', {
 			td.width = '70px';
 			tr.appendChild(td);
 
-
 		}
 
 		myTableDiv.appendChild(table);
@@ -97,7 +101,12 @@ Module.register('SmartMirror-ROS2-Bridge', {
 	notificationReceived: function (notification, payload, sender) {
 		const self = this;
 
-
+		for (var i = 0; i <self.config.ToROS2Topics.length; i++) {
+			if(self.config.ToROS2Topics[i][0] == notification){
+				console.log(notification,payload )
+				self.sendSocketNotification(notification, payload)
+			};
+		}
 	}
 });
 

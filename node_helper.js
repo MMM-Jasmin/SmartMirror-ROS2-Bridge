@@ -5,6 +5,8 @@ const rclnodejs = require('rclnodejs');
 module.exports = NodeHelper.create({
 
 	node_publisher: {},
+	node_subscriber: {},
+	bridge_node: undefined,
 
 	/**
 	* @function start
@@ -17,6 +19,10 @@ module.exports = NodeHelper.create({
 
 	},
 
+	stop: function() {
+		const self = this;
+		console.log("test test test");
+	},
 
 	/**
 	 * @function createROSsubber
@@ -32,16 +38,21 @@ module.exports = NodeHelper.create({
 			while (lcontext.isInitialized() == false)
 				await timer(100);
 		} else {
-			await rclnodejs.init(lcontext);
+			if(!lcontext.isInitialized())
+				await rclnodejs.init(lcontext);
 		}
 
-		const bridge_node = new rclnodejs.Node('SmartMirror_ROS2_bridge');
+		if (self.bridge_node == undefined){
+			self.bridge_node = new rclnodejs.Node('SmartMirror_ROS2_bridge');
+			//rclnodejs.spin(node); //Deprecated!
+			self.bridge_node.spin();
+		}
 
 		/* Used to test the ROS2 connection..
 		Creates a test Topic and sends dumm message
 		it will also be displayed in the debug info.. */
 		if (self.config.DummyMessage == true) {
-			const publisher = bridge_node.createPublisher('std_msgs/msg/String', "mirror_test");
+			const publisher = self.bridge_node.createPublisher('std_msgs/msg/String', "mirror_test");
 			let counter = 0;
 			setInterval(() => {
 				console.log(`Publishing message: Hello ROS ${counter}`);
@@ -49,29 +60,27 @@ module.exports = NodeHelper.create({
 			}, 1000);
 
 			console.log('[' + self.name + ']: creating bridge from ROS topic ' + "mirror_test");
-			bridge_node.createSubscription('std_msgs/msg/String', "mirror_test", (msg) => {
+			self.bridge_node.createSubscription('std_msgs/msg/String', "mirror_test", (msg) => {
 				self.sendSocketNotification("mirror_test", msg['data']);
 			});
 		}
 
 		self.config.ToROS2Topics.forEach(function (element) {
-			console.log('[' + self.name + ']: creating bridge to ROS topic ' + element[0]);
-			self.node_publisher[element[0]] = bridge_node.createPublisher(element[1], element[0]);
+			if(self.node_publisher[element[0]] == undefined){
+				console.log('[' + self.name + ']: creating bridge to ROS topic ' + element[0]);
+				self.node_publisher[element[0]] = self.bridge_node.createPublisher(element[1], element[0]);
+			}
 		});
-
-
 
 		self.config.FromROS2Topics.forEach(function (element) {
-			console.log('[' + self.name + ']: creating bridge from ROS topic ' + element[0]);
-			bridge_node.createSubscription(element[1], element[0], (msg) => {
-				self.sendSocketNotification(element[0], msg['data']);
-				//console.log('[' + self.name + ']: ' + element[0]);
-			});
+			if(self.node_subscriber[element[0]] == undefined){
+				console.log('[' + self.name + ']: creating bridge from ROS topic ' + element[0]);
+				self.node_subscriber[element[0]] = self.bridge_node.createSubscription(element[1], element[0], (msg) => {
+					self.sendSocketNotification(element[0], msg['data']);
+					//console.log('[' + self.name + ']: ' + element[0]);
+				});
+			}
 		});
-
-		//rclnodejs.spin(node); //Deprecated!
-		bridge_node.spin();
-
 	},
 
 	/**
@@ -88,6 +97,17 @@ module.exports = NodeHelper.create({
 			self.sendSocketNotification('debug', 'starting...');
 			self.createROSsubber();
 			self.sendSocketNotification('debug', 'running');
+		} else if(notification === 'RESTART_COMING') {
+			console.log("test")
+		
+		} else {
+
+			for (var i = 0; i <self.config.ToROS2Topics.length; i++) {
+				if(self.config.ToROS2Topics[i][0] == notification){
+
+					self.node_publisher[notification].publish(payload);
+				};
+			}
 		}
 
 	}
