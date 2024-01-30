@@ -16,12 +16,10 @@ module.exports = NodeHelper.create({
 	start() {
 		const self = this;
 		console.log(`Starting module helper: ${this.name}`);
-
 	},
 
 	stop: function() {
 		const self = this;
-		console.log("test test test");
 	},
 
 	/**
@@ -98,7 +96,7 @@ module.exports = NodeHelper.create({
 			self.createROSsubber();
 			self.sendSocketNotification('debug', 'running');
 		} else if(notification === 'RESTART_COMING') {
-			console.log("test")
+			//console.log("test")
 		
 		} else {
 
