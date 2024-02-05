@@ -102,8 +102,21 @@ module.exports = NodeHelper.create({
 
 			for (var i = 0; i <self.config.ToROS2Topics.length; i++) {
 				if(self.config.ToROS2Topics[i][0] == notification){
+					if(self.config.ToROS2Topics[i][1] == 'std_msgs/msg/ColorRGBA'){
+						console.log("send color")
+						console.log(payload)
 
-					self.node_publisher[notification].publish(payload);
+						var msg = {
+							r: payload[0],
+							g: payload[1],
+							b: payload[2],
+							a: payload[3],
+						  };
+
+						self.node_publisher[notification].publish(msg);
+					}else{
+						self.node_publisher[notification].publish(payload);
+					}
 				};
 			}
 		}
